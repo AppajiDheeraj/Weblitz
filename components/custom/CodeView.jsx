@@ -20,6 +20,7 @@ import { Loader2Icon } from "lucide-react";
 import { UserDetailContext } from "@/context/UserDetailContext";
 import { countToken } from "@/components/custom/ChatView";
 import SandpackPreviewClient from "./SandpackPreviewClient";
+import { ActionContext } from "@/context/ActionContext";
 
 function CodeView() {
   const { id } = useParams();
@@ -29,6 +30,7 @@ function CodeView() {
   const updateFiles = useMutation(api.workspace.UpdateFiles);
   const [loading, setLoading] = useState(false);
   const convex = useConvex();
+  const { action, setAction } = useContext(ActionContext);
   const { userDetails, setUserDetails } = useContext(UserDetailContext);
   const UpdateTokens = useMutation(api.users.UpdateToken);
 
