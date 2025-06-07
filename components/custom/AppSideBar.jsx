@@ -9,7 +9,7 @@ import {
 import Image from "next/image";
 import { Button } from "../ui/button";
 import { MessageCircleCode } from "lucide-react";
-import WorkSpaceHistory from "./WorkSpaceHistory";
+import WorkSpaceHistory from "./WorkspaceHistory";
 import SideBarFooter from "./SideBarFooter";
 
 function AppSideBar() {
