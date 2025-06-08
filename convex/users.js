@@ -58,3 +58,36 @@ export const UpdateToken = mutation({
     return result;
   },
 });
+
+export const UpdateUserName = mutation({
+  args: {
+    userId: v.id("users"),
+    name: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.patch(args.userId, {
+      name: args.name,
+    });
+  },
+});
+
+
+export const DeleteAccount = mutation({
+  args: {
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const workspaces = await ctx.db
+      .query("workspace")
+      .filter((q) => q.eq(q.field("user"), args.userId))
+      .collect();
+
+    // Delete all workspaces
+    for (const ws of workspaces) {
+      await ctx.db.delete(ws._id);
+    }
+
+    // Delete user
+    await ctx.db.delete(args.userId);
+  },
+});

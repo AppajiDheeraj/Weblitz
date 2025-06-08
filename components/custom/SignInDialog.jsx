@@ -52,21 +52,20 @@ function SignInDialog({ openDialog, closeDialog }) {
     <Dialog open={openDialog} onOpenChange={closeDialog}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{Lookup.SIGNIN_HEADING}</DialogTitle>
+          <DialogTitle></DialogTitle>
           <div className="flex flex-col justify-center items-center gap-3">
             <h2 className="font-bold text-2xl text-center text-white">
               {Lookup.SIGNIN_HEADING}
             </h2>
-            <p className="mt-2 text-center">{Lookup.SIGNIN_SUBHEADING}</p>
             <Button
-              className="bg-blue-500 text-white hover:bg-blue-400 mt-3"
+              className="bg-blue-500 text-white hover:bg-blue-400 mt-1"
               onClick={() => googleLogin()}
             >
               Sign In With Google
             </Button>
-            <p>{Lookup.SIGNIN_AGREEMENT_TEXT}</p>
+            <p className="text-center opacity-90">{Lookup.SIGNIN_AGREEMENT_TEXT}</p>
           </div>
-          <DialogDescription id="dialog-description">
+          <DialogDescription className="text-center" id="dialog-description">
             {Lookup.SIGNIN_SUBHEADING} {/* Inline content for accessibility */}
           </DialogDescription>
         </DialogHeader>

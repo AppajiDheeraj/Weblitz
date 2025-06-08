@@ -1,19 +1,23 @@
 "use client";
 import { HelpCircle, LogOut, Settings, Wallet } from "lucide-react";
-import React from "react";
+import React, { useContext } from "react";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
+import { UserDetailContext } from "@/context/UserDetailContext";
 
 function SideBarFooter() {
+  const { userDetails, setUserDetails } = useContext(UserDetailContext)
   const router = useRouter();
   const options = [
     {
       name: "Settings",
       icon: Settings,
+      path: "/settings"
     },
     {
       name: "Help Center",
       icon: HelpCircle,
+      path: "/help"
     },
     {
       name: "My Subscription",
@@ -25,15 +29,21 @@ function SideBarFooter() {
       icon: LogOut,
     },
   ];
-  const onOptionClock = (option) => {
-    router.push(option.path);
+  const onOptionClick = (option) => {
+    if (option?.name === "Sign Out") {
+      localStorage.removeItem("user");
+      setUserDetails(null);
+      router.push("/");
+    } else if (option.path) {
+      router.push(option.path);
+    }
   };
 
   return (
     <div className="p-2 mb-10">
       {options.map((option, index) => (
         <Button
-          onClick={() => onOptionClock(option)}
+          onClick={() => onOptionClick(option)}
           key={index}
           variant="ghost"
           className="w-full flex justify-start my-3"

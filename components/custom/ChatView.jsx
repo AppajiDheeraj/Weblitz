@@ -1,41 +1,35 @@
 "use client";
 
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
-import { useConvex } from "convex/react";
+import { useConvex, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { MessagesContext } from "@/context/MessagesContext";
-import Colors from "@/data/Colors";
 import { UserDetailContext } from "@/context/UserDetailContext";
-import Image from "next/image";
-import { ArrowRight, Link, Loader2Icon } from "lucide-react";
-import Lookup from "@/data/Lookup";
-import { useState } from "react";
-import axios from "axios";
-import Prompt from "@/data/Prompt";
-// import { UpdateMessages } from "@/convex/workspace";
-import { useMutation } from "convex/react";
-import ReactMarkdown from "react-markdown";
 import { useSidebar } from "../ui/sidebar";
+import Image from "next/image";
+import axios from "axios";
+import ReactMarkdown from "react-markdown";
+import { ArrowRight, Loader2Icon } from "lucide-react";
 import { toast } from "sonner";
+import Prompt from "@/data/Prompt";
+import Lookup from "@/data/Lookup";
 
 export const countToken = (inputText) => {
-  return inputText
-    .trim()
-    .split(/\s+/)
-    .filter((word) => word).length;
+  return inputText.trim().split(/\s+/).filter(Boolean).length;
 };
 
 function ChatView() {
   const [userInput, setUserInput] = useState("");
+  const [loading, setLoading] = useState(false);
   const { id } = useParams();
-  const convex = useConvex();
   const { userDetails, setUserDetails } = useContext(UserDetailContext);
   const { messages, setMessages } = useContext(MessagesContext);
-  const [loading, setLoading] = useState(false);
+  const convex = useConvex();
   const updateMessages = useMutation(api.workspace.UpdateMessages);
-  const { toggleSidebar } = useSidebar();
   const UpdateTokens = useMutation(api.users.UpdateToken);
+  const { toggleSidebar } = useSidebar();
+  const bottomRef = useRef(null);
 
   useEffect(() => {
     id && GetWorkspaceData();
@@ -46,129 +40,123 @@ function ChatView() {
       workspaceId: id,
     });
     setMessages(result?.messages);
-    console.log("Workspace Data:", result);
   };
 
   useEffect(() => {
-    console.log("Messages updated:", messages);
     if (messages?.length > 0) {
-      const lastMessage = messages[messages?.length - 1];
-      console.log("Last message role:", lastMessage?.role);
-      if (lastMessage?.role == "user") {
-        GetAiResponse();
-      }
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage?.role === "user") GetAiResponse();
     }
   }, [messages]);
 
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
+
   const GetAiResponse = async () => {
     setLoading(true);
-    const PROMPT = JSON.stringify(messages) + Prompt.CHAT_PROMPT;
-    const result = await axios.post("/api/ai-chat", {
-      prompt: PROMPT,
-    });
-    console.log("AI Response:", result.data.result);
-    const aiResp = {
-      role: "ai",
-      content: result.data.result,
-    };
-
+    const prompt = JSON.stringify(messages) + Prompt.CHAT_PROMPT;
+    const result = await axios.post("/api/ai-chat", { prompt });
+    const aiResp = { role: "ai", content: result.data.result };
     setMessages((prev) => [...prev, aiResp]);
 
     await updateMessages({
       messages: [...messages, aiResp],
       workspaceId: id,
     });
-    
-    const token = Number(userDetails?.token) - Number(countToken(JSON.stringify(aiResp)));
+
+    const remainingToken =
+      Number(userDetails?.token) - countToken(JSON.stringify(aiResp));
 
     await UpdateTokens({
-      token: token,
+      token: remainingToken,
       userId: userDetails?._id,
     });
 
-        setUserDetails(prev => ({
-        ...prev,
-        token: token,
-      }
-    ))
-
+    setUserDetails((prev) => ({ ...prev, token: remainingToken }));
     setLoading(false);
   };
 
   const onGenerate = async (input) => {
-    if(userDetails?.token <= 20) {
-      toast('You do not have enough tokens!')
+    if (userDetails?.token <= 20) {
+      toast("You do not have enough tokens!");
       return;
     }
-    setMessages((prev) => [
-      ...prev,
-      {
-        role: "user",
-        content: input,
-      },
-    ]);
+    setMessages((prev) => [...prev, { role: "user", content: input }]);
     setUserInput("");
   };
 
   return (
-    <div className="relative h-[85vh] flex flex-col ">
-      <div className="flex-1 overflow-y-scroll scrollbar-hide pl-5 ">
+    <div className="relative h-[85vh] flex flex-col bg-black/0 text-white px-4 pb-4">
+      {/* Chat Messages */}
+      <div className="flex-1 overflow-y-auto scrollbar-hide space-y-4 pr-2 pt-4">
         {messages?.map((msg, index) => (
           <div
             key={index}
-            className="p-3 rounded-lg mb-2 flex gap-2 items-start"
-            style={{ backgroundColor: Colors.CHAT_BACKGROUND }}
+            className={`flex items-start gap-3 ${
+              msg.role === "user" ? "justify-start" : "justify-end"
+            }`}
           >
-            {msg?.role === "user" && (
+            {msg.role === "user" && userDetails?.picture && (
               <Image
                 src={userDetails?.picture}
-                alt="userImage"
-                width={35}
-                height={35}
-                className="rounded-full"
+                alt="User"
+                width={32}
+                height={32}
+                className="rounded-full mt-2"
               />
             )}
-            <div className="flex flex-col">
+            <div
+              className={`max-w-[75%] p-4 rounded-2xl text-sm leading-normal shadow-xl whitespace-pre-line
+    ${
+      msg.role === "user"
+        ? "bg-[#1b1b1b] text-white rounded-bl-none"
+        : "bg-[#1a1f2e] text-gray-200 rounded-br-none"
+    }`}
+            >
               <ReactMarkdown>{msg.content}</ReactMarkdown>
             </div>
           </div>
         ))}
         {loading && (
-          <div
-            className="p-3 rounded-lg mb-2 flex gap-2 items-start leading-7"
-            style={{ backgroundColor: Colors.CHAT_BACKGROUND }}
-          >
-            <Loader2Icon className="animate-spin h-5 w-5 text-gray-400" />
-            <h2>Generating Response... </h2>
+          <div className="flex justify-end">
+            <div className="bg-[#262b38] p-3 rounded-2xl shadow-md flex items-center gap-2 text-sm">
+              <Loader2Icon className="animate-spin h-4 w-4 text-gray-400" />
+              <span>Generating response...</span>
+            </div>
           </div>
         )}
+        <div ref={bottomRef} />
       </div>
 
-      {/* Input Section */}
-      <div className="flex gap-2 items-end">
-        { userDetails && <Image className="rounded-full" onClick={toggleSidebar} src={userDetails?.picture} alt='user' width={30} height={30}></Image>}
-      <div
-        className="p-3 border rounded-xl max-w-xl w-full mt-3 "
-        style={{ backgroundColor: Colors.BACKGROUND }}
-      >
-        <div className="flex gap-3">
-          <textarea
-            value={userInput}
-            onChange={(event) => {
-              setUserInput(event.target.value);
-            }}
-            className="outline-none w-full bg-transparent h-32 max-h-56 resize-none"
-            placeholder={Lookup.INPUT_PLACEHOLDER}
+      {/* Input Box */}
+      <div className="flex items-end mt-4 gap-3">
+        {userDetails && (
+          <Image
+            onClick={toggleSidebar}
+            src={userDetails?.picture}
+            alt="User"
+            width={35}
+            height={35}
+            className="rounded-full cursor-pointer"
           />
-          {userInput && (
-            <ArrowRight
-              onClick={() => onGenerate(userInput)}
-              className="bg-blue-500 p-2 h-10 w-10 rounded-md cursor"
+        )}
+        <div className="flex flex-col w-full max-w-3xl bg-[#1e1e1e] shadow-xl rounded-2xl p-4 border border-gray-700">
+          <div className="flex items-end gap-3">
+            <textarea
+              value={userInput}
+              onChange={(e) => setUserInput(e.target.value)}
+              className="w-full h-20 max-h-40 resize-none outline-none bg-transparent text-white placeholder-gray-400 scrollbar-hide"
+              placeholder={Lookup.INPUT_PLACEHOLDER}
             />
-          )}
+            {userInput && (
+              <ArrowRight
+                onClick={() => onGenerate(userInput)}
+                className="bg-blue-500 p-2 h-10 w-10 rounded-md cursor"
+              />
+            )}
+          </div>
         </div>
-        <Link className="h-5 w-5" />
-      </div>
       </div>
     </div>
   );

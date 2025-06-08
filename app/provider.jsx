@@ -45,7 +45,8 @@ function Provider({ children }) {
     }
   };
   return (
-    <div>
+    <div className="relative bg-[#0f0f0f] min-h-screen w-full text-white overflow-hidden">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[350px] h-[450px] bg-blue-600 rounded-full blur-[180px] opacity-20 pointer-events-none z-0" />
       <GoogleOAuthProvider
         clientId={process.env.NEXT_PUBLIC_GOOGLE_AUTH_CLIENT_ID_KEY}
       >
