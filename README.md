@@ -1,9 +1,7 @@
 <h1 align="center">Weblitz</h1>
 
 <p align="center">
-  <img src="public/logo.png" alt="Weblitz Logo" width="100" />
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="public/favicon.ico" alt="Weblitz Icon" width="48" />
+  <img src="public/logo.png" alt="Weblitz Logo" width="180" />
 </p>
 
 <p align="center">
