@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<h1 align="center">Weblitz</h1>
 
-## Getting Started
+<p align="center">
+  <img src="/logo.png" alt="Weblitz Logo" width="100" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="/favicon.ico" alt="Weblitz Icon" width="48" />
+</p>
 
-First, run the development server:
+<p align="center">
+  Turn conversations into websites with <strong>Weblitz</strong> – an AI-powered SaaS platform built with <strong>Next.js</strong>, <strong>React</strong>, <strong>Tailwind CSS</strong>, and <strong>Convex</strong>. Just chat, and Weblitz builds your site.
+</p>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Overview
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+**Weblitz** is a full-stack AI SaaS application that allows users to build fully functional websites through a simple conversational interface. By combining natural language understanding with AI code generation, Weblitz eliminates the need for manual coding or templates—just describe what you need, and your website is ready.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🛠️ Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Next.js** – Framework for server-side rendering and routing
+- **React** – Component-based frontend architecture
+- **Tailwind CSS** – Utility-first styling framework
+- **Convex** – Real-time backend and data syncing
+- **AI Models** – Gemini / OpenAI for natural language to code generation
+- **Clerk** – (Optional) Authentication and user management
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## ✨ Features
 
-## Deploy on Vercel
+- 🧠 **Chat-to-Website Builder**: Describe your idea and Weblitz turns it into a real website.
+- 🪄 **AI-Powered Layouts**: Generate complete HTML/CSS/JS structures via chat.
+- 📄 **Live Preview**: Instantly see your website update as the AI builds it.
+- 🔄 **Editable Output**: Tweak your AI-generated site visually or with code.
+- 📁 **Persistent Projects**: Store and revisit previously built sites.
+- 🌐 **Responsive Design**: Every site works across devices.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🌐 Live Demo
+
+[https://weblitz.vercel.app](https://weblitz.vercel.app)
+
+---
+
+## 🧠 How It Works
+
+1. User opens the app and starts a chat session.
+2. AI understands the intent and responds with generated code.
+3. Code is rendered in real-time to preview the website.
+4. Users can iterate via chat, modify the site, and save/export it.
+
+---
+
+## ❤️ Made with Love
+
+Created to empower anyone—developer or not—to build stunning websites using nothing but a conversation.
